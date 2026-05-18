@@ -615,6 +615,64 @@
       overflow-wrap: anywhere;
     }
 
+    @media (min-width: 901px) {
+      body {
+        overflow: hidden;
+      }
+
+      .app {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding: 28px 0;
+      }
+
+      .topbar {
+        flex: 0 0 auto;
+      }
+
+      .layout {
+        align-items: stretch;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .flow-panel,
+      .main-stack {
+        height: 100%;
+        max-height: 100%;
+        min-height: 0;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #aebbb1 transparent;
+      }
+
+      .flow-panel {
+        position: static;
+      }
+
+      .main-stack {
+        padding-right: 6px;
+      }
+
+      .flow-panel::-webkit-scrollbar,
+      .main-stack::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .flow-panel::-webkit-scrollbar-thumb,
+      .main-stack::-webkit-scrollbar-thumb {
+        background: #b8c2bb;
+        border-radius: 999px;
+      }
+
+      .flow-panel::-webkit-scrollbar-track,
+      .main-stack::-webkit-scrollbar-track {
+        background: transparent;
+      }
+    }
+
     @media (max-width: 900px) {
       .app {
         width: min(100% - 22px, 760px);
@@ -1082,9 +1140,27 @@
     const formsEl = document.querySelector("#forms");
     const lawsEl = document.querySelector("#laws");
     const cardEl = document.querySelector("#check-card");
+    const detailBodyEl = document.querySelector(".detail-body");
+    const mainStackEl = document.querySelector(".main-stack");
     const branchStripEl = document.querySelector(".branch-strip");
     const flowPanelEl = document.querySelector(".flow-panel");
     const backToFlowEl = document.querySelector("#back-to-flow");
+
+    function resetCheckCardPosition() {
+      mainStackEl.scrollTop = 0;
+      cardEl.scrollTop = 0;
+      detailBodyEl.scrollTop = 0;
+
+      requestAnimationFrame(() => {
+        mainStackEl.scrollTop = 0;
+        cardEl.scrollTop = 0;
+        detailBodyEl.scrollTop = 0;
+
+        if (window.matchMedia("(max-width: 900px)").matches) {
+          cardEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    }
 
     function makeStepButton(step, index) {
       const button = document.createElement("button");
@@ -1102,11 +1178,7 @@
       `;
       button.addEventListener("click", () => {
         renderStep(index);
-        if (window.matchMedia("(max-width: 900px)").matches) {
-          requestAnimationFrame(() => {
-            cardEl.scrollIntoView({ behavior: "smooth", block: "start" });
-          });
-        }
+        resetCheckCardPosition();
       });
       return button;
     }
