@@ -1,0 +1,1185 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>校園霸凌事件處理檢核</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f5;
+      --ink: #17201b;
+      --muted: #657066;
+      --line: #d8ded4;
+      --panel: #ffffff;
+      --teal: #0e7c72;
+      --teal-soft: #dff1ee;
+      --amber: #a76400;
+      --amber-soft: #fff1d7;
+      --rose: #a73e55;
+      --rose-soft: #fde7ec;
+      --blue: #315a91;
+      --blue-soft: #e3ecf8;
+      --shadow: 0 18px 48px rgba(32, 43, 36, 0.11);
+      --radius: 8px;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(90deg, rgba(14, 124, 114, 0.08), transparent 34%),
+        linear-gradient(180deg, #fbfcf8 0%, var(--bg) 42%, #eef3f0 100%);
+      color: var(--ink);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3.8vw, 3.1rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .source-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.76);
+      color: #374137;
+      white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(32, 43, 36, 0.06);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 330px) 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .flow-panel,
+    .detail-panel,
+    .reminder-panel,
+    .reference-panel {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .detail-panel {
+      background: #fff;
+    }
+
+    .flow-panel {
+      position: sticky;
+      top: 16px;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .panel-note {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .steps {
+      display: grid;
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .step-group {
+      display: grid;
+      gap: 3px;
+    }
+
+    .step-group-title {
+      padding: 8px 10px 4px;
+      color: var(--teal);
+      font-weight: 800;
+      font-size: 0.86rem;
+      line-height: 1.35;
+    }
+
+    .step-group-steps {
+      display: grid;
+      gap: 2px;
+    }
+
+    .step-button {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 10px;
+      width: 100%;
+      min-height: 82px;
+      padding: 11px 10px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .step-button:hover {
+      background: #eef5f2;
+    }
+
+    .step-button[aria-current="true"] {
+      background: var(--teal-soft);
+      outline: 2px solid rgba(14, 124, 114, 0.22);
+    }
+
+    .code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 30px;
+      border-radius: 999px;
+      background: #e9ece6;
+      color: #29352d;
+      font-weight: 800;
+      font-size: 0.86rem;
+    }
+
+    .step-button[aria-current="true"] .code {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .step-title {
+      display: block;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .step-meta {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.35;
+    }
+
+    .step-deadline {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 26px;
+      margin-top: 8px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f4ecdb;
+      color: #69440b;
+      font-weight: 750;
+      font-size: 0.78rem;
+      line-height: 1.2;
+    }
+
+    .main-stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .branch-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .branch-strip[hidden] {
+      display: none;
+    }
+
+    .branch-intro {
+      grid-column: 1 / -1;
+    }
+
+    .branch-intro h3 {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .branch-intro p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.92rem;
+    }
+
+    .branch {
+      padding: 14px 16px;
+      min-height: 96px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+    }
+
+    .branch-a {
+      background: linear-gradient(180deg, #fffdfa, #fff7e8);
+    }
+
+    .branch-b {
+      background: linear-gradient(180deg, #fbfdff, #eef5fb);
+    }
+
+    .branch strong {
+      display: block;
+      color: var(--blue);
+      font-size: 0.95rem;
+    }
+
+    .branch span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .branch-alerts,
+    .step-alerts {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .branch-alert,
+    .step-alert {
+      padding: 9px 10px;
+      border-radius: 7px;
+      border-left: 4px solid #9a7a35;
+      background: #fff4de;
+      color: #47330e;
+      line-height: 1.55;
+      font-size: 0.9rem;
+    }
+
+    .branch-b .branch-alert,
+    .step-alert.investigation {
+      border-left-color: #456f95;
+      background: #eaf3f9;
+      color: #233d55;
+    }
+
+    .detail-card {
+      scroll-margin-top: 20px;
+    }
+
+    .detail-body {
+      padding: 20px;
+    }
+
+    .detail-top {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+    }
+
+    .detail-top > div {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .detail-top.full-width {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .detail-top.full-width .deadline {
+      width: fit-content;
+      white-space: normal;
+    }
+
+    .active-code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 76px;
+      height: 40px;
+      border-radius: 999px;
+      background: var(--teal);
+      color: #fff;
+      font-weight: 850;
+      letter-spacing: 0.03em;
+    }
+
+    .detail-title {
+      margin: 0;
+      font-size: clamp(1.35rem, 2vw, 2rem);
+      line-height: 1.2;
+      letter-spacing: 0;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .detail-summary {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .deadline {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--amber-soft);
+      color: #6d3f00;
+      font-weight: 700;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid.single-column {
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 901px) {
+      .detail-top.full-width .detail-title {
+        white-space: nowrap;
+      }
+    }
+
+    .section h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .check-list li {
+      position: relative;
+      padding-left: 1.35em;
+      line-height: 1.62;
+      color: #2e382f;
+    }
+
+    .check-list li::before {
+      content: "・";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--teal);
+      font-weight: 900;
+    }
+
+    .back-to-flow {
+      display: none;
+      width: 100%;
+      margin-top: 18px;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #f2f6f3;
+      color: #25362d;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .forms {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .form-chip {
+      display: inline-flex;
+      gap: 7px;
+      align-items: center;
+      min-height: 34px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #f2f4ef;
+      color: #263029;
+      font-size: 0.9rem;
+    }
+
+    .form-chip em {
+      font-style: normal;
+      color: var(--blue);
+      font-weight: 750;
+    }
+
+    .laws {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .law-chip {
+      display: inline-flex;
+      min-height: 32px;
+      align-items: center;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: #25466f;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .reminder-panel {
+      border-color: #f1ccd4;
+      background: linear-gradient(180deg, #fff, #fff8fa);
+    }
+
+    .reminder-body,
+    .reference-body {
+      padding: 16px 18px 18px;
+    }
+
+    .reminder-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .reminder-list li {
+      padding: 13px;
+      border-left: 4px solid var(--rose);
+      background: var(--rose-soft);
+      border-radius: 6px;
+      line-height: 1.65;
+    }
+
+    .reference-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .reference-item {
+      min-height: 92px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fbfcfa;
+    }
+
+    .reference-item strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--teal);
+    }
+
+    .reference-item span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .source-panel {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      color: #46524a;
+    }
+
+    .source-panel h2 {
+      margin: 0;
+      color: #263f62;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .source-links {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 0;
+      padding-left: 1.25rem;
+    }
+
+    .source-links li {
+      line-height: 1.6;
+    }
+
+    .source-links a {
+      color: #315a91;
+      font-weight: 700;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .source-note {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .footer {
+      margin-top: 34px;
+      padding: 18px 20px;
+      border-top: 1px solid var(--line);
+      color: #5f6b62;
+      font-size: 0.88rem;
+      line-height: 1.75;
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 0;
+    }
+
+    .footer-meta {
+      margin-top: 10px;
+      color: #35445c;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .footer-contact {
+      margin-top: 4px;
+      color: #69736b;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        width: min(100% - 22px, 760px);
+        padding-top: 18px;
+      }
+
+      .topbar,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .layout {
+        gap: 24px;
+      }
+
+      .flow-panel {
+        position: static;
+        background: #fff;
+        border-color: #dce4d8;
+        box-shadow: 0 12px 32px rgba(32, 43, 36, 0.1);
+      }
+
+      .steps {
+        display: grid;
+        gap: 12px;
+        padding: 10px;
+      }
+
+      .step-button {
+        grid-template-columns: 62px 1fr;
+        min-height: 96px;
+        border: 1px solid #e4e9df;
+        background: #fbfcfa;
+      }
+
+      .code {
+        justify-content: center;
+        width: max-content;
+        padding: 0 10px;
+      }
+
+      .back-to-flow {
+        display: block;
+      }
+
+      .detail-card {
+        scroll-margin-top: 24px;
+      }
+
+      .detail-top {
+        display: grid;
+        gap: 12px;
+      }
+
+      .deadline {
+        width: fit-content;
+        white-space: normal;
+      }
+
+      .grid,
+      .reminder-list,
+      .reference-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        width: min(100% - 18px, 520px);
+      }
+
+      .source-pill {
+        white-space: normal;
+      }
+
+      .branch-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .branch {
+        border: 1px solid var(--line);
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>校園霸凌事件處理檢核</h1>
+        <p class="subtitle">B001 至 B010 修正版流程，聚焦生對生事件；遇師對生、性平、兒少保護、跟蹤騷擾或其他專法事項時，先分流並另依專法確認。</p>
+      </div>
+      <div class="source-pill">靜態查核工具 · 不儲存個案資料</div>
+    </header>
+
+    <section class="layout" aria-label="B001 到 B010 檢核流程">
+      <aside class="flow-panel" aria-label="流程目錄">
+        <div class="panel-head">
+          <h2 class="panel-title">流程目錄</h2>
+          <p class="panel-note">點選任一步驟查看查核卡</p>
+        </div>
+        <nav class="steps" id="steps" aria-label="B001-B010">
+        </nav>
+      </aside>
+
+      <div class="main-stack">
+        <section class="detail-panel detail-card" id="check-card" aria-live="polite">
+          <div class="detail-body">
+            <div class="detail-top">
+              <div>
+                <span class="active-code" id="active-code">B001</span>
+                <h2 class="detail-title" id="detail-title"></h2>
+                <p class="detail-summary" id="detail-summary"></p>
+                <div class="step-alerts" id="step-alerts"></div>
+              </div>
+              <span class="deadline" id="deadline"></span>
+            </div>
+
+            <div class="grid">
+              <section class="section" aria-labelledby="checks-title">
+                <h3 id="checks-title">查核重點</h3>
+                <ul class="check-list" id="checks"></ul>
+              </section>
+
+              <section class="section" aria-labelledby="forms-title">
+                <h3 id="forms-title">表件與法源</h3>
+                <div class="forms" id="forms"></div>
+                <div class="laws" id="laws"></div>
+              </section>
+            </div>
+            <div class="branch-strip" aria-label="B006 雙軌分支">
+              <div class="branch-intro">
+                <h3>下一步分流</h3>
+                <p>完成處理小組組成與會前會後，依雙方意願及案件需要進入調和或調查。</p>
+              </div>
+              <div class="branch branch-a">
+                <strong>B006A 調和程序</strong>
+                <span>雙方均同意時採行；任一方無意願或依法應停止調和時，轉入調查軌。</span>
+                <div class="branch-alerts" aria-label="B006A 注意事項">
+                  <div class="branch-alert">調和會議不得錄音或錄影。</div>
+                  <div class="branch-alert">調和不成立後，調和中的退讓或陳述不得作為調查報告基礎。</div>
+                </div>
+              </div>
+              <div class="branch branch-b">
+                <strong>B006B 調查程序</strong>
+                <span>不同意調和、調和停止、或事件需釐清事實時進行，由處理小組完成調查報告。</span>
+                <div class="branch-alerts" aria-label="B006B 注意事項">
+                  <div class="branch-alert">調查訪談應全程錄音或錄影。</div>
+                  <div class="branch-alert">不得令雙方當事人對質。</div>
+                </div>
+              </div>
+            </div>
+            <button class="back-to-flow" type="button" id="back-to-flow">↑ 回到流程目錄</button>
+          </div>
+        </section>
+
+        <section class="reminder-panel" aria-labelledby="reminder-title">
+          <div class="panel-head">
+            <h2 class="panel-title" id="reminder-title">撤回檢舉與終止評估</h2>
+            <p class="panel-note">以下為條件提醒，不作為 B001-B010 的線性主步驟。</p>
+          </div>
+          <div class="reminder-body">
+            <ul class="reminder-list">
+              <li>檢舉已撤回，屬得不予受理的檢核項目；但學校認有必要時，仍得受理或本於職權繼續調查處理。</li>
+              <li>調和中撤回檢舉，不等同自動結案；仍須留下審查、判斷及通知紀錄。</li>
+              <li>調和應停止的情形包含任一方無意願、權力或地位影響調和、逾一個月仍未成立、顯無必要或不能調和。</li>
+              <li>有人建議終止評估時，先確認是否已完成保全資料、關懷輔導、管轄與專法分流判斷。</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="reference-panel" aria-labelledby="reference-title">
+          <div class="panel-head">
+            <h2 class="panel-title" id="reference-title">表件來源標示</h2>
+          </div>
+          <div class="reference-body">
+            <div class="reference-grid">
+              <div class="reference-item">
+                <strong>地方參考表單</strong>
+                <span>地方教育主管機關提供的檢核表、通知書、調和或調查紀錄範例。</span>
+              </div>
+              <div class="reference-item">
+                <strong>校內自備</strong>
+                <span>學校自行製作並留存的會議紀錄、輔導紀錄、證據保全清冊或函文。</span>
+              </div>
+              <div class="reference-item">
+                <strong>另依專法確認</strong>
+                <span>性平、兒少保護、教師解聘不續聘停聘或資遣、少年事件等另有程序者。</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="source-panel" aria-labelledby="source-title">
+          <h2 id="source-title">參考表件來源</h2>
+          <ol class="source-links">
+            <li><a href="https://bully.moe.edu.tw/news/139" target="_blank" rel="noopener noreferrer">教育部防制校園霸凌專區｜工作手冊表單</a></li>
+            <li><a href="https://www.tn.edu.tw/校園霸凌事件相關表件/" target="_blank" rel="noopener noreferrer">地方整理參考｜校園霸凌事件相關表件</a></li>
+            <li><a href="http://163.30.64.12/modules/tad_uploader/index.php?of_cat_sn=14" target="_blank" rel="noopener noreferrer">其他地方表單參考</a></li>
+          </ol>
+          <p class="source-note">表件版本可能因主管機關更新而異，正式使用前請以教育部防制校園霸凌專區、主管機關最新公告及學校內部程序為準。</p>
+        </section>
+
+        <footer class="footer">
+          <p>本工具為校園霸凌事件流程與法規查核輔助，實際案件仍應依現行法規、主管機關函釋及校園霸凌防制委員會決議辦理。</p>
+          <p class="footer-meta">COPYRIGHT © 2026 HSINCHU NEI HU PRIMARY SCHOOL</p>
+          <p>總務主任 江志宏</p>
+          <p class="footer-contact">smallcannon@nhps.hc.edu.tw｜03-5373184 #130</p>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const steps = [
+      {
+        code: "B001",
+        title: "知悉、檢舉與即時安全",
+        meta: "接獲、視同檢舉、24 小時通報",
+        deadline: "立即處理",
+        summary: "校長及教職員工知悉疑似事件時，立即通報校內權責人員並啟動安全維護與關懷。",
+        checks: [
+          "確認是否為被行為人、法定代理人、實際照顧者或其他知悉人提出。",
+          "大眾傳播媒體、警政、醫療或衛福機關通知者，視同檢舉處理。",
+          "校內權責人員向主管機關通報，至遲不得超過二十四小時。",
+          "先行評估人身安全、報復風險與班級互動安排。"
+        ],
+        forms: [
+          ["疑似事件檢舉書", "地方參考表單"],
+          ["校安通報紀錄", "校內自備"],
+          ["兒少或其他通報", "另依專法確認"]
+        ],
+        laws: ["第 17 條", "第 18 條", "第 38 條"]
+      },
+      {
+        code: "B002",
+        title: "管轄、移送與初步關懷",
+        meta: "調查學校、跨校、轉銜",
+        deadline: "移送 3 個工作日內",
+        summary: "先確認是否為調查學校；非調查學校仍須通報，並於期限內移送正確學校。",
+        checks: [
+          "以行為發生時行為人所屬學校為調查學校。",
+          "非調查學校接獲檢舉，仍須完成通報並移送調查學校。",
+          "行為人分屬不同學校者，以先接獲檢舉之學校負責。",
+          "同步啟動被行為人、行為人及相關學生的關懷輔導。"
+        ],
+        forms: [
+          ["移送通知", "校內自備"],
+          ["跨校聯繫紀錄", "校內自備"],
+          ["關懷輔導紀錄", "校內自備"]
+        ],
+        laws: ["第 19 條", "第 20 條", "第 21 條"]
+      },
+      {
+        code: "B003",
+        title: "案類分流與第 71 條準用",
+        meta: "生對生、專法、故意傷害",
+        deadline: "受理審查前完成",
+        summary: "確認是否屬本準則事件；學生故意傷害他人身體或健康者，也納入第 71 條準用檢核。",
+        checks: [
+          "確認行為人與被行為人身分，生對生事件走本頁主流程。",
+          "疑似師對生、性別事件、兒少保護、跟蹤騷擾或刑事風險，另依專法確認。",
+          "相同或不同學校學生，於校園內外故意傷害他人身體或健康者，標註第 71 條準用。",
+          "保全與事件有關之證據、資料、物品及必要說明。"
+        ],
+        forms: [
+          ["分流判斷表", "校內自備"],
+          ["證據保全清冊", "校內自備"],
+          ["專法通報或移送文件", "另依專法確認"]
+        ],
+        laws: ["第 4 條", "第 23 條", "第 71 條"]
+      },
+      {
+        code: "B004",
+        title: "審查小組受理判斷",
+        meta: "三人審查、20 個工作日通知",
+        deadline: "20 個工作日內通知",
+        summary: "由校長於防制委員會委員中指派三人組成審查小組，判斷受理或不受理。",
+        checks: [
+          "檢核是否非屬本準則、無具體內容、無真實姓名或足以識別資訊。",
+          "同一事件已不受理或已作成終局實體處理者，列入不受理檢核。",
+          "已撤回檢舉者列入不受理檢核，但必要時可續行處理。",
+          "不受理須經審查小組委員全體一致同意並敘明理由。"
+        ],
+        forms: [
+          ["受理或不受理通知書", "地方參考表單"],
+          ["審查紀錄", "校內自備"],
+          ["陳情書", "地方參考表單"]
+        ],
+        laws: ["第 24 條", "第 25 條", "第 26 條"]
+      },
+      {
+        code: "B005",
+        title: "組成處理小組與會前會",
+        meta: "受理後 5 個工作日內",
+        deadline: "受理後 5 個工作日內組成處理小組；會前會應於進入調和或調查前完成。",
+        summary: "審查小組決議受理後，學校應組成處理小組；處理小組完成內部分工後，進行調和或調查會議前之個別會談，說明程序並確認雙方意願。",
+        checks: [
+          "決議受理後 5 個工作日內組成處理小組。",
+          "處理小組委員互推一人擔任主持人。",
+          "處理小組決定內部分工。",
+          "委員分別進行調和或調查會議前之個別會談。",
+          "會前會應提供調和或調查程序說明書。",
+          "會前會應提供調和意願書。",
+          "會前會不得錄音或錄影。",
+          "會前會應瞭解雙方感受、需要，以及期望共同彌補傷害與修復關係之方式。"
+        ],
+        alerts: [
+          "會前會不得錄音或錄影。這與調查訪談全程錄音或錄影不同，請勿混用程序。"
+        ],
+        forms: [
+          ["處理小組名冊", "校內自備"],
+          ["調和或調查程序說明書", "地方參考表單或校內自備"],
+          ["調和意願書", "地方參考表單"],
+          ["調和或調查會議前之個別會談紀錄", "地方參考表單或校內自備"]
+        ],
+        laws: ["第 27 條", "第 28 條", "第 29 條"]
+      },
+      {
+        code: "B006A",
+        title: "調和程序",
+        meta: "雙方同意才進入",
+        deadline: "成立後 7 個工作日內提報告",
+        summary: "雙方均同意時進行調和；成立後完成調和報告，提防制委員會審議。",
+        checks: [
+          "調和程序須尊重雙方意願，任一方無意願即停止。",
+          "調和會議不得錄音或錄影。",
+          "調和協議經雙方達成後，作成調和協議並受其拘束。",
+          "成立後七個工作日內完成調和報告。"
+        ],
+        alerts: [
+          "調和會議不得錄音或錄影。",
+          "調和不成立後，調和中的退讓或陳述不得作為調查報告基礎。"
+        ],
+        forms: [
+          ["調和意願書", "地方參考表單"],
+          ["調和協議", "地方參考表單"],
+          ["調和報告", "地方參考表單"]
+        ],
+        laws: ["第 30 條", "第 31 條", "第 34 條", "第 35 條"]
+      },
+      {
+        code: "B006B",
+        title: "調查程序",
+        meta: "不同意調和或調和停止",
+        deadline: "首次會議起 2 個月內",
+        summary: "處理小組召開調查會議，依中立、公正原則蒐集事證並完成調查報告。",
+        checks: [
+          "調和停止後應進行調查並召開調查會議。",
+          "調查中若雙方重新有調和意願，處理小組得停止調查改行調和。",
+          "調查過程除必要者外，避免重複訪談學生。",
+          "無正當理由拒絕配合且限期仍未配合者，得不待陳述逕作調查報告。"
+        ],
+        alerts: [
+          "調查訪談應全程錄音或錄影。",
+          "不得令雙方當事人對質。"
+        ],
+        forms: [
+          ["調查訪談紀錄", "校內自備"],
+          ["調查報告", "地方參考表單"],
+          ["錄音錄影保管清冊", "校內自備"]
+        ],
+        laws: ["第 33 條", "第 36 條", "第 39 條", "第 41 條", "第 43 條"]
+      },
+      {
+        code: "B007",
+        title: "霸凌及不當行為要件檢核",
+        meta: "霸凌、不當行為、第 71 條",
+        deadline: "調查報告前完成",
+        summary: "處理小組依蒐集事證檢核霸凌及不當行為要件，並同步確認第 71 條準用情形。",
+        checks: [
+          "霸凌定義檢核包含故意、持續行為、敵意或不友善環境、身心財產損害或影響學習。",
+          "不得把權勢差異列為霸凌成立的必備要件。",
+          "學生故意傷害他人身體或健康者，同步標註第 71 條準用。",
+          "未達霸凌成立要件但涉及不當行為者，仍應列明事實、影響與建議處置。"
+        ],
+        forms: [
+          ["認定檢核表", "校內自備"],
+          ["第 71 條準用註記", "校內自備"],
+          ["不當行為事實整理", "校內自備"]
+        ],
+        laws: ["第 4 條", "第 36 條", "第 37 條", "第 71 條"]
+      },
+      {
+        code: "B008",
+        title: "撰寫調查報告",
+        meta: "事實、認定、建議措施",
+        deadline: "第一次調和或調查會議起 2 個月內完成；必要時依法延長。",
+        summary: "處理小組整合訪談、事證與要件檢核，完成調查報告並提出認定及處理建議。",
+        checks: [
+          "整理檢舉內容、調查過程、訪談紀錄、證據資料與爭點。",
+          "逐項說明霸凌、不當行為或第 71 條準用之認定理由。",
+          "列明輔導、管教、保護措施或其他必要處置建議。",
+          "確認報告附件、錄音錄影保管及去識別化版本是否完整。"
+        ],
+        forms: [
+          ["調查報告", "地方參考表單"],
+          ["調查附件清冊", "校內自備"],
+          ["去識別化版本", "校內自備"]
+        ],
+        laws: ["第 36 條", "第 39 條", "第 41 條", "第 43 條"]
+      },
+      {
+        code: "B009",
+        title: "防制委員會審議",
+        meta: "審議調和或調查報告",
+        deadline: "報告完成後提審議",
+        summary: "防制委員會審議調和或調查報告，作成霸凌成立、不成立、不當行為或相關處置決議。",
+        checks: [
+          "確認委員迴避、出席、表決門檻與會議紀錄完整。",
+          "審議調和報告或調查報告之事實、理由、認定與建議措施。",
+          "必要時請處理小組補充說明或補正資料。",
+          "作成防制委員會決議，提供學校進行終局實體處理。"
+        ],
+        forms: [
+          ["防制委員會會議紀錄", "校內自備"],
+          ["審議決議紀錄", "校內自備"],
+          ["補正或補充說明紀錄", "校內自備"]
+        ],
+        laws: ["第 35 條", "第 44 條", "第 45 條"]
+      },
+      {
+        code: "B010",
+        title: "終局實體處理與通知",
+        meta: "處理、通知、救濟與追蹤",
+        deadline: "決議後 15 個工作日內作成終局實體處理；作成後 10 個工作日內書面通知。",
+        summary: "學校依防制委員會決議作成終局實體處理，書面通知當事人並告知救濟或陳情方式。",
+        checks: [
+          "依防制委員會決議作成終局實體處理，並落實輔導、管教、保護或其他必要處置。",
+          "於期限內書面載明事實及理由，通知行為人與被行為人；未成年學生並通知其法定代理人或實際照顧者。",
+          "提醒救濟途徑：行為人為申訴，被行為人為陳情，並載明方法、期間及受理機關。",
+          "備查、追蹤與校園改善僅作為後續提醒，不作為 v0.1 主流程步驟。"
+        ],
+        forms: [
+          ["終局處理通知書", "地方參考表單"],
+          ["陳情書", "地方參考表單"],
+          ["備查函與追蹤紀錄", "校內自備"]
+        ],
+        laws: ["第 45 條", "第 46 條", "第 47 條", "第 48 條", "第 49 條", "第 50 條", "第 58 條", "第 59 條", "第 61 條", "第 62 條", "第 70 條"]
+      }
+    ];
+
+    const flowGroups = [
+      { title: "一、受理與保護", codes: ["B001", "B002"] },
+      { title: "二、審查與立案", codes: ["B003", "B004"] },
+      { title: "三、處理小組與分流", codes: ["B005", "B006A", "B006B"] },
+      { title: "四、調查認定", codes: ["B007", "B008"] },
+      { title: "五、審議與通知", codes: ["B009", "B010"] }
+    ];
+
+    const stepIndexByCode = new Map(steps.map((step, index) => [step.code, index]));
+    const stepsEl = document.querySelector("#steps");
+    const activeCodeEl = document.querySelector("#active-code");
+    const titleEl = document.querySelector("#detail-title");
+    const summaryEl = document.querySelector("#detail-summary");
+    const deadlineEl = document.querySelector("#deadline");
+    const detailTopEl = document.querySelector(".detail-top");
+    const checksEl = document.querySelector("#checks");
+    const stepAlertsEl = document.querySelector("#step-alerts");
+    const detailGridEl = document.querySelector(".grid");
+    const formsEl = document.querySelector("#forms");
+    const lawsEl = document.querySelector("#laws");
+    const cardEl = document.querySelector("#check-card");
+    const branchStripEl = document.querySelector(".branch-strip");
+    const flowPanelEl = document.querySelector(".flow-panel");
+    const backToFlowEl = document.querySelector("#back-to-flow");
+
+    function makeStepButton(step, index) {
+      const button = document.createElement("button");
+      button.className = "step-button";
+      button.type = "button";
+      button.dataset.index = String(index);
+      button.setAttribute("aria-current", index === 0 ? "true" : "false");
+      button.innerHTML = `
+        <span class="code">${step.code}</span>
+          <span>
+            <span class="step-title">${step.title}</span>
+            <span class="step-meta">${step.meta}</span>
+            <span class="step-deadline">${step.deadline}</span>
+          </span>
+      `;
+      button.addEventListener("click", () => {
+        renderStep(index);
+        if (window.matchMedia("(max-width: 900px)").matches) {
+          requestAnimationFrame(() => {
+            cardEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        }
+      });
+      return button;
+    }
+
+    function makeStepGroup(group) {
+      const wrapper = document.createElement("section");
+      wrapper.className = "step-group";
+      wrapper.setAttribute("aria-label", group.title);
+
+      const title = document.createElement("div");
+      title.className = "step-group-title";
+      title.textContent = group.title;
+
+      const list = document.createElement("div");
+      list.className = "step-group-steps";
+      group.codes.forEach((code) => {
+        const index = stepIndexByCode.get(code);
+        if (index !== undefined) {
+          list.appendChild(makeStepButton(steps[index], index));
+        }
+      });
+
+      wrapper.append(title, list);
+      return wrapper;
+    }
+
+    function renderStep(index) {
+      const step = steps[index];
+      document.querySelectorAll(".step-button").forEach((button) => {
+        button.setAttribute("aria-current", button.dataset.index === String(index) ? "true" : "false");
+      });
+
+      activeCodeEl.textContent = step.code;
+      titleEl.textContent = step.title;
+      summaryEl.textContent = step.summary;
+      deadlineEl.textContent = step.deadline;
+      const showBranchStrip = ["B005", "B006A", "B006B"].includes(step.code);
+      branchStripEl.hidden = !showBranchStrip;
+      branchStripEl.setAttribute("aria-hidden", showBranchStrip ? "false" : "true");
+      detailTopEl.classList.toggle("full-width", step.code === "B005");
+      detailGridEl.classList.toggle("single-column", step.code === "B005");
+
+      checksEl.replaceChildren(...step.checks.map((text) => {
+        const item = document.createElement("li");
+        item.textContent = text;
+        return item;
+      }));
+
+      stepAlertsEl.replaceChildren(...(step.alerts || []).map((text) => {
+        const item = document.createElement("div");
+        item.className = `step-alert ${step.code === "B006B" ? "investigation" : ""}`;
+        item.textContent = text;
+        return item;
+      }));
+
+      formsEl.replaceChildren(...step.forms.map(([name, source]) => {
+        const chip = document.createElement("span");
+        chip.className = "form-chip";
+        chip.innerHTML = `<strong>${name}</strong><em>${source}</em>`;
+        return chip;
+      }));
+
+      lawsEl.replaceChildren(...step.laws.map((law) => {
+        const chip = document.createElement("span");
+        chip.className = "law-chip";
+        chip.textContent = law;
+        return chip;
+      }));
+    }
+
+    backToFlowEl.addEventListener("click", () => {
+      flowPanelEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    flowGroups.forEach((group) => stepsEl.appendChild(makeStepGroup(group)));
+    renderStep(0);
+  </script>
+</body>
+</html>
